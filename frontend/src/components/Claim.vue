@@ -13,31 +13,55 @@
             determined by an on-chain random number generated when you mint.
             Enjoy your cute robots, Cheers!
           </p>
-          <div class="btn-wrapper">
-            <button @click="claim" class="btn-app">Mint</button>
-          </div>
         </div>
       </div>
       <div class="card-wrapper">
         <div class="card">
-          <header class="card-header">
-            <p class="card-header-title">Minted</p>
-          </header>
-          <div class="last-panel centered" v-if="myTokenIds.length === 0">
-            You don't own any QRobot yet
+          <div class="b-tabs">
+            <nav class="tabs">
+              <ul aria-orientation="horizontal" role="tablist">
+                <li
+                  role="tab"
+                  aria-controls="10-content"
+                  :aria-selected="activeTab === 0"
+                  :class="activeTab === 0 ? 'is-active' : ''"
+                >
+                  <a id="10-label" tabindex="0" @click="activeTab = 0"
+                    ><!----><span>Owned</span></a
+                  >
+                </li>
+                <li
+                  role="tab"
+                  aria-controls="12-content"
+                  :aria-selected="activeTab === 1"
+                  :class="activeTab === 1 ? 'is-active' : ''"
+                >
+                  <a id="12-label" tabindex="1" @click="activeTab = 1"
+                    ><!----><span>All</span></a
+                  >
+                </li>
+              </ul>
+            </nav>
           </div>
-          <div class="last-panel" v-else>
-            <div class="columns" v-for="(group, index) in groups" :key="index">
-              <div class="column is-4" v-for="id in group" :key="id">
-                <div class="placeholder">
-                  <a :href="tokenUrl(id)" target="_blank">
-                    <img :src="tokenUrl(id)" />
-                  </a>
+            <div class="last-panel centered" v-if="tokenIds.length === 0">
+              {{activeTab === 0 ? "You don't own any QRobot yet" : "Loading..."}}
+            </div>
+            <div class="last-panel" v-else>
+              <div
+                class="columns"
+                v-for="(group, index) in groups"
+                :key="index"
+              >
+                <div class="column is-4" v-for="id in group" :key="id">
+                  <div class="placeholder">
+                    <a :href="tokenUrl(id)" target="_blank">
+                      <img :src="tokenUrl(id)" />
+                    </a>
+                  </div>
+                  <p class="heading">QRobot #{{ id }}</p>
                 </div>
-                <p class="heading">QRobot #{{ id }}</p>
               </div>
             </div>
-          </div>
         </div>
       </div>
     </div>
@@ -77,9 +101,10 @@ export default {
     loading: null,
     txhash: "",
     isCheckingTx: false,
-    myTokenIds: [],
+    tokenIds: [],
     nftImage: "",
     isImageModalActive: false,
+    activeTab: 0,
   }),
 
   methods: {
@@ -87,7 +112,11 @@ export default {
       if (!this.account) {
         return;
       }
-      this.myTokenIds = await this.getTokenIds(this.account);
+      if (this.activeTab === 0) {
+        this.tokenIds = await this.getTokenIds(this.account);
+      } else {
+        this.tokenIds = await this.getAllTokenIds();
+      }
     },
     async claim() {
       try {
@@ -156,13 +185,13 @@ export default {
       return "";
     },
     groups() {
-      const len = this.myTokenIds.length / 3;
+      const len = this.tokenIds.length / 3;
       const arr = [];
       for (let i = 0; i < len; i++) {
         arr[i] = [];
         for (let j = 0; j < 3; j++) {
-          if (i * 3 + j < this.myTokenIds.length) {
-            arr[i][j] = this.myTokenIds[i * 3 + j];
+          if (i * 3 + j < this.tokenIds.length) {
+            arr[i][j] = this.tokenIds[i * 3 + j];
           }
         }
       }
@@ -390,7 +419,6 @@ button:disabled {
   color: #ffffff !important;
 }
 .last-panel {
-  padding-top: 1rem;
   margin: 1rem;
   text-align: center;
   color: #999999;
@@ -452,8 +480,8 @@ button:disabled {
 }
 .placeholder {
   background-position: center;
-  background-image: url("../assets/spinner.svg");
+  background-image: url("../assets/spinner.gif");
   background-repeat: no-repeat;
-  background-size: 20px 20px;
+  height: 293px;
 }
 </style>
