@@ -6,8 +6,8 @@
           <img src="../assets/demo.png" />
           <div class="pad"></div>
           <p class="text">
-            Web3 QRobot is a collection of cute robots that can be minted freely
-            on Web3Q blockchain. All the
+            Web3 QRobot is a collection of cute robots that can be minted on
+            Web3Q blockchain. All the
             <a :href="metaLink" target="_blank">metadata</a> has been uploaded
             to Web3Q in advance, and the traits of the robot will be fully
             determined by an on-chain random number generated when you mint.
@@ -24,7 +24,7 @@
                   role="tab"
                   aria-controls="10-content"
                   :aria-selected="activeTab === 0"
-                  :class="activeTab === 0 ? 'is-active' : ''"
+                  :class="activeTab === 0 ? 'is-active heavy' : ''"
                 >
                   <a id="10-label" tabindex="0" @click="activeTab = 0"
                     ><!----><span>Owned</span></a
@@ -34,7 +34,7 @@
                   role="tab"
                   aria-controls="12-content"
                   :aria-selected="activeTab === 1"
-                  :class="activeTab === 1 ? 'is-active' : ''"
+                  :class="activeTab === 1 ? 'is-active heavy' : ''"
                 >
                   <a id="12-label" tabindex="1" @click="activeTab = 1"
                     ><!----><span>All</span></a
@@ -43,25 +43,23 @@
               </ul>
             </nav>
           </div>
-            <div class="last-panel centered" v-if="tokenIds.length === 0">
-              {{activeTab === 0 ? "You don't own any QRobot yet" : "Loading..."}}
-            </div>
-            <div class="last-panel" v-else>
-              <div
-                class="columns"
-                v-for="(group, index) in groups"
-                :key="index"
-              >
-                <div class="column is-4" v-for="id in group" :key="id">
-                  <div class="placeholder">
-                    <a :href="tokenUrl(id)" target="_blank">
-                      <img :src="tokenUrl(id)" />
-                    </a>
-                  </div>
-                  <p class="heading">QRobot #{{ id }}</p>
+          <div class="last-panel centered" v-if="tokenIds.length === 0">
+            {{
+              activeTab === 0 ? "You don't own any QRobot yet" : "Loading..."
+            }}
+          </div>
+          <div class="last-panel" v-else>
+            <div class="columns" v-for="(group, index) in groups" :key="index">
+              <div class="column is-4" v-for="id in group" :key="id">
+                <div class="placeholder">
+                  <a :href="tokenUrl(id)" target="_blank">
+                    <img :src="tokenUrl(id)" />
+                  </a>
                 </div>
+                <p class="heading">QRobot #{{ id }}</p>
               </div>
             </div>
+          </div>
         </div>
       </div>
     </div>
@@ -473,6 +471,9 @@ button:disabled {
   @media (max-width: $res) {
     width: 60%;
   }
+}
+.heavy {
+  font-family: AlibabaPuHuiTiB;
 }
 .card-img {
   min-height: 6rem;
